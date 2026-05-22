@@ -1,0 +1,164 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alon8\\Desktop\\C_Programming\\Survice ICE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2\\datacomm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\pattern.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\obstacle.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\game_state.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\collision.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9ECA76AE-20F5-4E6D-8CA9-34AF3D1E2863}|Survice ICE.vcxproj|C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1\\proglang.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "phase2.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2.c",
+              "RelativeDocumentMoniker": "..\\src\\phase2.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2.c",
+              "RelativeToolTip": "..\\src\\phase2.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:44.744Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "phase1.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1.c",
+              "RelativeDocumentMoniker": "..\\src\\phase1.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1.c",
+              "RelativeToolTip": "..\\src\\phase1.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:44.267Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "pattern.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\pattern.c",
+              "RelativeDocumentMoniker": "..\\src\\pattern.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\pattern.c",
+              "RelativeToolTip": "..\\src\\pattern.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:43.694Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "datacomm.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2\\datacomm.c",
+              "RelativeDocumentMoniker": "..\\src\\phase2\\datacomm.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase2\\datacomm.c",
+              "RelativeToolTip": "..\\src\\phase2\\datacomm.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:40.154Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "game_state.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\game_state.c",
+              "RelativeDocumentMoniker": "..\\src\\game_state.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\game_state.c",
+              "RelativeToolTip": "..\\src\\game_state.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:41.544Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "collision.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\collision.c",
+              "RelativeDocumentMoniker": "..\\src\\collision.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\collision.c",
+              "RelativeToolTip": "..\\src\\collision.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:40.904Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "proglang.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1\\proglang.c",
+              "RelativeDocumentMoniker": "..\\src\\phase1\\proglang.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\phase1\\proglang.c",
+              "RelativeToolTip": "..\\src\\phase1\\proglang.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:33:38.006Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "obstacle.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\obstacle.c",
+              "RelativeDocumentMoniker": "..\\src\\obstacle.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\obstacle.c",
+              "RelativeToolTip": "..\\src\\obstacle.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:32:56.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "main.c",
+              "DocumentMoniker": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\main.c",
+              "RelativeDocumentMoniker": "..\\src\\main.c",
+              "ToolTip": "C:\\Users\\alon8\\Desktop\\C_Programming\\src\\main.c",
+              "RelativeToolTip": "..\\src\\main.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-05-15T08:32:56.199Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

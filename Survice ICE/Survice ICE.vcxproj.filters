@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\phase1">
+      <UniqueIdentifier>{e5f6a7b8-c9d0-4123-cdef-123456789012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\phase1">
+      <UniqueIdentifier>{f6a7b8c9-d0e1-4234-def0-234567890123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\phase2">
+      <UniqueIdentifier>{c3d4e5f6-a7b8-4901-acde-f01234567890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\phase2">
+      <UniqueIdentifier>{d4e5f6a7-b8c9-4012-bdef-012345678901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\phase3">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-4789-9abc-def012345678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\phase3">
+      <UniqueIdentifier>{b2c3d4e5-f6a7-4890-9bcd-ef0123456789}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\collision.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game_state.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\obstacle.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pattern.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase1.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase1\proglang.c">
+      <Filter>소스 파일\phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase2.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase2\datacomm.c">
+      <Filter>소스 파일\phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase3.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase3\blockchain.c">
+      <Filter>소스 파일\phase3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase3\ml.c">
+      <Filter>소스 파일\phase3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase3\os.c">
+      <Filter>소스 파일\phase3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase3\webserver.c">
+      <Filter>소스 파일\phase3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\player.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\score.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\settings.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui_menu.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui_play.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui_ranking.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui_result.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui_settings.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\collision.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game_state.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\obstacle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pattern.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase1\proglang.h">
+      <Filter>헤더 파일\phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase2\datacomm.h">
+      <Filter>헤더 파일\phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase3.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase3\blockchain.h">
+      <Filter>헤더 파일\phase3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase3\ml.h">
+      <Filter>헤더 파일\phase3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase3\os.h">
+      <Filter>헤더 파일\phase3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase3\webserver.h">
+      <Filter>헤더 파일\phase3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\player.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\score.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\settings.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\types.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui_menu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui_play.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui_ranking.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui_result.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui_settings.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
