@@ -7,10 +7,12 @@
 #include "ui_ranking.h"
 #include "ui_settings.h"
 #include "player.h"
+#include "settings.h"
 
 GameState current_state = STATE_MAIN_MENU;
 
 void init_game(void) {
+    init_settings();
     init_player();
 }
 

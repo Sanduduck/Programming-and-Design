@@ -1,6 +1,7 @@
 // 플레이어: 좌우 이동, 2단 점프, 중력, 바닥 충돌
 
 #include "player.h"
+#include "settings.h"
 
 #define WINDOW_W       1280
 #define FLOOR_Y        600       // 바닥 평지 윗면 y좌표
@@ -25,15 +26,11 @@ void init_player(void) {
 }
 
 void update_player(float dt) {
-    // 좌우 입력 폴링 (방향키 또는 A/D)
+    // 좌우 입력 폴링 — 설정 화면에서 선택한 조작 방식의 키만 사용
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     player.vx = 0.0f;
-    if (keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A]) {
-        player.vx = -MOVE_SPEED;
-    }
-    if (keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D]) {
-        player.vx = MOVE_SPEED;
-    }
+    if (keys[g_settings.key_left])  player.vx = -MOVE_SPEED;
+    if (keys[g_settings.key_right]) player.vx = MOVE_SPEED;
 
     // 중력
     player.vy += GRAVITY * dt;
@@ -61,6 +58,10 @@ void update_player(float dt) {
 }
 
 void draw_player(SDL_Renderer *r) {
+    // 무적 중이면 6프레임 간격으로 안 그림 → 깜빡임 효과
+    if (player.invincible_timer > 0 && (player.invincible_timer / 6) % 2 == 0) {
+        return;
+    }
     // 임시 사각형 (나중에 스프라이트로 교체)
     SDL_Rect rect = { (int)player.x, (int)player.y, PLAYER_WIDTH, PLAYER_HEIGHT };
     SDL_SetRenderDrawColor(r, 135, 206, 235, 255);   // 하늘색
@@ -79,5 +80,5 @@ void player_jump(void) {
 void player_damage(void) {
     if (player.invincible_timer > 0) return;
     if (player.hp > 0) player.hp--;
-    player.invincible_timer = 60;
+    player.invincible_timer = 60;   // 임시로 1초 (60프레임 @ 60FPS)
 }

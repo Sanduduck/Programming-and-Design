@@ -1,6 +1,5 @@
 // 메인 메뉴 화면
 
-#include <stdio.h>
 #include <SDL_ttf.h>
 #include "ui_menu.h"
 #include "game_state.h"
@@ -21,18 +20,13 @@ static TTF_Font *menu_font = NULL;
 static void load_font(void) {
     if (menu_font) return;
     menu_font = TTF_OpenFont("C:/Windows/Fonts/malgun.ttf", 28);
-    if (!menu_font) {
-        printf("폰트 로드 실패: %s\n", TTF_GetError());
-    }
 }
 
 // 사각형 영역 안에 텍스트 가운데 정렬해서 그리기
 static void draw_text_centered(SDL_Renderer *r, const char *text,
                                int box_x, int box_y, int box_w, int box_h) {
-    if (!menu_font) return;
     SDL_Color white = { 255, 255, 255, 255 };
     SDL_Surface *surf = TTF_RenderUTF8_Blended(menu_font, text, white);
-    if (!surf) return;
     SDL_Texture *tex = SDL_CreateTextureFromSurface(r, surf);
     SDL_Rect dst = {
         box_x + (box_w - surf->w) / 2,

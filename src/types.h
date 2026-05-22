@@ -42,11 +42,19 @@ typedef struct {
     bool drop_heal_item;
 } Pattern;
 
+// 조작 방식
+typedef enum {
+    CONTROL_ARROWS = 0,   // ← → ↑
+    CONTROL_WASD   = 1    // A D W
+} ControlScheme;
+
 // 설정
 typedef struct {
-    int bgm_volume;
-    int sfx_volume;
-    int key_left;
+    int master_volume;        // 0~100
+    int bgm_volume;           // 0~100
+    int sfx_volume;           // 0~100
+    ControlScheme control_scheme;
+    int key_left;             // SDL_Scancode
     int key_right;
     int key_jump;
 } Settings;

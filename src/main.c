@@ -21,15 +21,8 @@ int main(int argc, char *argv[]) {
     system("chcp 65001 > nul");
 
     // SDL 초기화
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL_Init 실패: %s\n", SDL_GetError());
-        return 1;
-    }
-    if (TTF_Init() < 0) {
-        printf("TTF_Init 실패: %s\n", TTF_GetError());
-        SDL_Quit();
-        return 1;
-    }
+    SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
 
     SDL_Window *window = SDL_CreateWindow(
         "정통에서 살아남기",
@@ -37,23 +30,10 @@ int main(int argc, char *argv[]) {
         WINDOW_WIDTH, WINDOW_HEIGHT,
         SDL_WINDOW_SHOWN
     );
-    if (!window) {
-        printf("창 생성 실패: %s\n", SDL_GetError());
-        TTF_Quit();
-        SDL_Quit();
-        return 1;
-    }
 
     SDL_Renderer *renderer = SDL_CreateRenderer(
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
-    if (!renderer) {
-        printf("렌더러 생성 실패: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        TTF_Quit();
-        SDL_Quit();
-        return 1;
-    }
 
     // 콘솔 안내
     printf("=== 정통에서 살아남기 ===\n");
