@@ -6,8 +6,6 @@
 #include "game_state.h"
 #include "types.h"
 
-#define WINDOW_W   1280
-#define WINDOW_H   720
 #define RANK_COUNT 10
 
 // 컬럼 좌표 (순위 / 점수 / 등급)

@@ -1,264 +1,190 @@
-// 웹서버프로그래밍 패턴 (정복래) — HTTP 메서드 ↔ 의미 매칭
-// 하단에 GET / POST / PUT / DELETE 텍스트 블록 4개 배치
-// 상단 패널에 의미 설명이 한글로 표시되면, 플레이어가 해당 블록 위에서 ↓ 키로 머리 위로 들어올림
-// 폭탄이 떨어지는 동안 올바른 블록을 들고 있으면 막힘, 아니면 데미지
-// 4메서드를 셔플 순서로 모두 출제 → 총 4라운드
-
 #include "webserver.h"
 #include "../player.h"
 #include <SDL_ttf.h>
-#include <math.h>
+#include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
-#define WINDOW_W       1280
-#define FLOOR_Y        600
+#define LOGO_CX (WINDOW_W / 2)
+#define LOGO_CY 85
+#define LOGO_H 140                                // 로고(육각형) 전체 높이
+#define DROP_Y 200.0f   // 로고 하단 + 여백 — 모든 링크 시작 y
+#define FALL_SPEED 300.0f
+#define HOMING_SPEED 420.0f
+#define MAX_FALLERS 32
+#define CELL_W 56           // 글자 하나가 차지하는 가로 폭 — 늘려 화면을 채움
 
-#define BLOCK_W        130
-#define BLOCK_H        60
-#define BLOCK_TOP_Y    (FLOOR_Y - BLOCK_H)
+// 낙하 중인 글자 묶음 하나 (링크 전체 / 절반 / 등분 조각 / 글자 한 개)
+typedef struct {
+    SDL_Texture *tex;
+    int   w, h;
+    float x, y, vx, vy;
+    float delay;       // 턴 시작 후 떨어지기 시작하는 시각
+    bool  launched;
+    bool  gone;
+} Faller;
 
-#define MEANING_BAR_W  420
-#define MEANING_BAR_H  72
-#define MEANING_BAR_Y  80
-
-#define BOMB_R         44                  // 원래: 24 — 더 크게 표시
-
-// 페이즈별 시간(초)
-#define INTRO_TIME     1.8f
-#define FALL_TIME      1.8f
-#define RESOLVE_TIME   1.4f
-
-typedef enum {
-    METHOD_GET = 0,
-    METHOD_POST,
-    METHOD_PUT,
-    METHOD_DELETE,
-    METHOD_COUNT
-} HttpMethod;
-
-typedef enum {
-    PHASE_INTRO = 0,    // 의미 표시 + 블록 선택 시간
-    PHASE_FALLING,      // 폭탄 낙하 중
-    PHASE_RESOLVE,      // 결과 잔상 표시
-    PHASE_DONE          // 4라운드 종료
-} RoundPhase;
-
-// 메서드별 고정 x좌표 + 영문 토큰 + 한글 설명
-static const struct {
-    float x;
-    const char *token;
-    const char *meaning;
-} METHOD_DATA[METHOD_COUNT] = {
-    { 240.0f, "GET",    "데이터 조회"      },
-    { 480.0f, "POST",   "데이터 생성"      },
-    { 720.0f, "PUT",    "데이터 전체 수정" },
-    { 960.0f, "DELETE", "데이터 삭제"      },
+static const char *URLS[4] = {
+    "https://www.naver.com",
+    "https://www.youtube.com",
+    "https://chatgpt.com",
+    "https://www.sungkyul.ac.kr",
 };
 
-static float phase_time = 0.0f;
-static RoundPhase phase = PHASE_INTRO;
-static int round_idx = 0;
-static int order[METHOD_COUNT];
-static int holding = -1;
-static bool prev_down = false;
-
-static float bomb_y = 0.0f;
-static float bomb_vy = 0.0f;
-
-static bool  last_blocked = false;
-static float resolve_cx = 0.0f;
-static float resolve_cy = 0.0f;
-
-static TTF_Font *token_font   = NULL;   // 블록 위 영문 메서드명
-static TTF_Font *meaning_font = NULL;   // 상단 한글 설명
-
-static void load_font(void) {
-    if (!token_font)   token_font   = TTF_OpenFont("C:/Windows/Fonts/malgun.ttf", 26);
-    if (!meaning_font) meaning_font = TTF_OpenFont("C:/Windows/Fonts/malgun.ttf", 38);
-}
+static TTF_Font *font;
+static Faller fallers[MAX_FALLERS];
+static int faller_count;
+static int turn;
+static float timer;
+static bool built;
+static bool done;
 
 void webserver_start(void) {
-    load_font();
+    if (!font) font = TTF_OpenFont("C:/Windows/Fonts/malgun.ttf", 40);
+    turn  = 0;
+    timer = -2.0f;   // 첫 링크도 로고 등장 후 2초 대기
+    built = false;
+    done  = false;
+}
 
-    phase_time = 0.0f;
-    phase = PHASE_INTRO;
-    round_idx = 0;
-    holding = -1;
-    prev_down = false;
+// URL의 [start, start+len) 글자를 텍스처로 구워 cx 중심에 놓는 Faller 추가
+static void add_faller(SDL_Renderer *r, const char *s, int start, int len,
+                       float cx, float delay) {
+    char buf[64];
+    memcpy(buf, s + start, len);
+    buf[len] = '\0';
 
-    for (int i = 0; i < METHOD_COUNT; i++) order[i] = i;
-    // Fisher-Yates 셔플 — 매 플레이마다 출제 순서가 달라짐
-    for (int i = METHOD_COUNT - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        int tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    SDL_Color col = { 150, 230, 245, 255 };
+    SDL_Surface *sf = TTF_RenderUTF8_Blended(font, buf, col);
+
+    Faller *f = &fallers[faller_count++];
+    f->tex = SDL_CreateTextureFromSurface(r, sf);
+    f->w = len * CELL_W;                        // 글자 수 × 폭 — 가로로 늘임
+    f->h = (int)((float)sf->h * f->w / sf->w);  // 가로 확대율만큼 세로도 — 비율 유지
+    SDL_FreeSurface(sf);
+    f->x = cx - f->w / 2.0f;
+    f->y = DROP_Y;
+    f->vx = 0.0f;
+    f->vy = FALL_SPEED;
+    f->delay = delay;
+    f->launched = false;
+    f->gone = false;
+}
+
+// 현재 턴의 Faller 구성 — 텍스처 생성에 렌더러가 필요해 draw에서 호출
+static void build_turn(SDL_Renderer *r) {
+    for (int i = 0; i < faller_count; i++) SDL_DestroyTexture(fallers[i].tex);
+    faller_count = 0;
+
+    const char *url = URLS[turn];
+    int n = (int)strlen(url);
+
+    if (turn == 0) {
+        add_faller(r, url, 0, n, WINDOW_W / 2, 0.0f);
     }
-}
-
-static int correct_method(void) {
-    return order[round_idx];
-}
-
-static bool player_on_block(int i) {
-    float bx = METHOD_DATA[i].x;
-    return player.x + PLAYER_W > bx && player.x < bx + (float)BLOCK_W;
+    else if (turn == 1) {
+        int half = (n + 1) / 2;  // 앞쪽이 한 글자 더 — "youtube.com" 이 뒤 조각
+        add_faller(r, url, 0, half, half * CELL_W / 2.0f, 0.0f); // 왼쪽 끝에 닿게
+        add_faller(r, url, half, n - half,
+                   WINDOW_W - (n - half) * CELL_W / 2.0f, 2.2f); // 오른쪽 끝에 닿게
+    }
+    else if (turn == 2) {
+        int lens[3] = { 8, 7, n - 15 };   // "https://" / "chatgpt" / ".com"
+        int start = 0;
+        for (int i = 0; i < 3; i++) {
+            add_faller(r, url, start, lens[i], WINDOW_W / 2, i * 2.0f);  // 조각마다 2초 간격 발사
+            start += lens[i];
+        }
+    }
+    else {
+        for (int i = 0; i < n; i++) {
+            float cx = (float)(60 + rand() % (WINDOW_W - 120));
+            add_faller(r, url, i, 1, cx, i * 0.20f);
+        }
+    }
+    built = true;
 }
 
 void webserver_update(float dt) {
-    if (phase == PHASE_DONE) return;
-    phase_time += dt;
+    if (done || !built) return;
+    timer += dt;
 
-    const Uint8 *keys = SDL_GetKeyboardState(NULL);
-    bool cur_down = keys[SDL_SCANCODE_DOWN] != 0;
-    bool just_pressed = cur_down && !prev_down;
-    prev_down = cur_down;
+    int alive = 0;
+    for (int i = 0; i < faller_count; i++) {
+        Faller *f = &fallers[i];
+        if (f->gone) continue;
+        alive++;
 
-    if (just_pressed) {
-        int on_block = -1;
-        for (int i = 0; i < METHOD_COUNT; i++) {
-            if (player_on_block(i)) { on_block = i; break; }
-        }
-        if (on_block >= 0) {
-            holding = (holding == on_block) ? -1 : on_block;
-        } else {
-            holding = -1;
-        }
-    }
-
-    if (phase == PHASE_FALLING) {
-        bomb_y += bomb_vy * dt;
-    }
-
-    if (phase == PHASE_INTRO) {
-        if (phase_time >= INTRO_TIME) {
-            bomb_y = -(float)BOMB_R;
-            float target_y = player.y - (float)BLOCK_H * 0.5f;
-            bomb_vy = (target_y - bomb_y) / FALL_TIME;
-            phase = PHASE_FALLING;
-            phase_time = 0.0f;
-        }
-    } else if (phase == PHASE_FALLING) {
-        if (phase_time >= FALL_TIME) {
-            last_blocked = (holding == correct_method());
-            resolve_cx = player.x + PLAYER_W * 0.5f;
-            if (last_blocked) {
-                resolve_cy = player.y - (float)BLOCK_H * 0.5f - 4.0f;
-            } else {
-                player_damage();
-                resolve_cy = player.y + PLAYER_H * 0.5f;
+        if (!f->launched) {
+            if (timer < f->delay) continue;
+            f->launched = true;
+            if (turn == 2) {   // 발사 순간 플레이어 위치를 한 번만 조준
+                float dx = player.x + PLAYER_W / 2.0f - (f->x + f->w / 2.0f);
+                float dy = player.y + PLAYER_H / 2.0f - (f->y + f->h / 2.0f);
+                float d = sqrtf(dx * dx + dy * dy);
+                f->vx = dx / d * HOMING_SPEED;
+                f->vy = dy / d * HOMING_SPEED;
             }
-            phase = PHASE_RESOLVE;
-            phase_time = 0.0f;
         }
-    } else if (phase == PHASE_RESOLVE) {
-        if (phase_time >= RESOLVE_TIME) {
-            round_idx++;
-            phase = (round_idx >= METHOD_COUNT) ? PHASE_DONE : PHASE_INTRO;
-            phase_time = 0.0f;
+
+        f->x += f->vx * dt;
+        f->y += f->vy * dt;
+
+        if (f->y > WINDOW_H + 40.0f || f->x + f->w < -40.0f || f->x > WINDOW_W + 40.0f) {
+            f->gone = true;
         }
+    }
+
+    if (alive == 0) {
+        turn++;
+        timer = -2.0f;   // 다음 링크까지 2초 대기 (timer 음수 동안 delay 게이트가 막음)
+        built = false;
+        if (turn >= 4) done = true;
     }
 }
 
 bool webserver_finished(void) {
-    return phase == PHASE_DONE;
+    return done;
 }
 
-static void fill_circle(SDL_Renderer *r, int cx, int cy, int radius) {
-    for (int dy = -radius; dy <= radius; dy++) {
-        int dx = (int)sqrtf((float)(radius * radius - dy * dy));
-        SDL_RenderDrawLine(r, cx - dx, cy + dy, cx + dx, cy + dy);
+// 위·아래 꼭짓점 육각형 채우기 — 가운데 띠 최대폭, 위아래로 좁아짐
+static void fill_hexagon(SDL_Renderer *r, int cx, int cy, int w, int h) {
+    int hw = w / 2, hh = h / 2, flat = h / 4;
+    for (int dy = -hh; dy <= hh; dy++) {
+        int ady = dy < 0 ? -dy : dy;
+        int span = ady <= flat ? hw
+            : (int)(hw * (1.0f - (float)(ady - flat) / (hh - flat)));
+        SDL_RenderDrawLine(r, cx - span, cy + dy, cx + span, cy + dy);
     }
 }
 
-// 텍스트를 (cx, cy) 중심으로 렌더 — datacomm/ui_settings 와 동일 패턴
-static void draw_text_centered(SDL_Renderer *r, TTF_Font *font,
-                               const char *text, int cx, int cy,
-                               SDL_Color color) {
-    if (!font || !text) return;
-    SDL_Surface *surf = TTF_RenderUTF8_Blended(font, text, color);
-    if (!surf) return;
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(r, surf);
-    SDL_Rect dst = { cx - surf->w / 2, cy - surf->h / 2, surf->w, surf->h };
-    SDL_RenderCopy(r, tex, NULL, &dst);
-    SDL_FreeSurface(surf);
-    SDL_DestroyTexture(tex);
-}
-
-static void draw_block(SDL_Renderer *r, int idx, int x, int y) {
-    SDL_SetRenderDrawColor(r, 0, 60, 70, 255);
-    SDL_Rect rect = { x, y, BLOCK_W, BLOCK_H };
-    SDL_RenderFillRect(r, &rect);
-    SDL_SetRenderDrawColor(r, 200, 240, 245, 255);
-    SDL_RenderDrawRect(r, &rect);
+static void draw_logo(SDL_Renderer *r) {
+    SDL_SetRenderDrawColor(r, 60, 100, 30, 255);
+    fill_hexagon(r, LOGO_CX, LOGO_CY, 116, 140);
+    SDL_SetRenderDrawColor(r, 131, 205, 41, 255);
+    fill_hexagon(r, LOGO_CX, LOGO_CY, 96, 116);
 
     SDL_Color white = { 255, 255, 255, 255 };
-    draw_text_centered(r, token_font, METHOD_DATA[idx].token,
-                       x + BLOCK_W / 2, y + BLOCK_H / 2, white);
-}
-
-static void draw_bomb(SDL_Renderer *r) {
-    int bx = (int)(player.x + PLAYER_W * 0.5f);
-    int by = (int)bomb_y;
-    SDL_SetRenderDrawColor(r, 30, 30, 30, 255);
-    fill_circle(r, bx, by, BOMB_R);
-    // 도화선
-    SDL_SetRenderDrawColor(r, 255, 130, 30, 255);
-    SDL_Rect fuse = { bx - 5, by - BOMB_R - 16, 10, 16 };
-    SDL_RenderFillRect(r, &fuse);
-    // 도화선 끝 불꽃
-    SDL_SetRenderDrawColor(r, 255, 230, 80, 255);
-    fill_circle(r, bx, by - BOMB_R - 19, 7);
+    SDL_Surface *sf = TTF_RenderUTF8_Blended(font, "JS", white);
+    int jw = sf->w, jh = sf->h;
+    SDL_Texture *t = SDL_CreateTextureFromSurface(r, sf);
+    SDL_FreeSurface(sf);
+    SDL_Rect d = { LOGO_CX - jw * 3 / 4, LOGO_CY - jh * 3 / 4,
+                   jw * 3 / 2, jh * 3 / 2 };
+    SDL_RenderCopy(r, t, NULL, &d);
+    SDL_DestroyTexture(t);
 }
 
 void webserver_draw(SDL_Renderer *r) {
-    // 상단 의미 패널 + 한글 설명
-    if (phase == PHASE_INTRO || phase == PHASE_FALLING) {
-        int idx = correct_method();
-        SDL_SetRenderDrawColor(r, 0, 60, 70, 255);
-        SDL_Rect bar = {
-            (WINDOW_W - MEANING_BAR_W) / 2,
-            MEANING_BAR_Y,
-            MEANING_BAR_W,
-            MEANING_BAR_H
-        };
-        SDL_RenderFillRect(r, &bar);
-        SDL_SetRenderDrawColor(r, 200, 240, 245, 255);
-        SDL_RenderDrawRect(r, &bar);
+    if (!done && !built) build_turn(r);
 
-        SDL_Color white = { 255, 255, 255, 255 };
-        draw_text_centered(r, meaning_font, METHOD_DATA[idx].meaning,
-                           WINDOW_W / 2, MEANING_BAR_Y + MEANING_BAR_H / 2, white);
-    }
-
-    // 바닥 블록 4개 (들고 있는 것은 따로 그림)
-    for (int i = 0; i < METHOD_COUNT; i++) {
-        if (i == holding) continue;
-        draw_block(r, i, (int)METHOD_DATA[i].x, BLOCK_TOP_Y);
-    }
-
-    // 들고 있는 블록 — 플레이어 머리 위
-    if (holding >= 0) {
-        int bx = (int)player.x + ((int)PLAYER_W - BLOCK_W) / 2;
-        int by = (int)player.y - BLOCK_H - 6;
-        draw_block(r, holding, bx, by);
-    }
-
-    if (phase == PHASE_FALLING) {
-        draw_bomb(r);
-    }
-
-    // 결과 잔상 — 성공은 초록, 실패는 주황 (커지면서 페이드아웃)
-    if (phase == PHASE_RESOLVE) {
-        float t = phase_time / RESOLVE_TIME;
-        if (t > 1.0f) t = 1.0f;
-        int radius = (int)(90.0f + 130.0f * t);
-        Uint8 alpha = (Uint8)(255.0f * (1.0f - t));
-        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-        if (last_blocked) {
-            SDL_SetRenderDrawColor(r, 110, 230, 110, alpha);
-        } else {
-            SDL_SetRenderDrawColor(r, 255, 150, 60, alpha);
+    if (!done) {
+        for (int i = 0; i < faller_count; i++) {
+            Faller *f = &fallers[i];
+            if (!f->launched || f->gone) continue;
+            SDL_Rect d = { (int)f->x, (int)f->y, f->w, f->h };
+            SDL_RenderCopy(r, f->tex, NULL, &d);
         }
-        fill_circle(r, (int)resolve_cx, (int)resolve_cy, radius);
-        SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_NONE);
     }
+    draw_logo(r);
 }

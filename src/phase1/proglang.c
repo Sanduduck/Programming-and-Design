@@ -1,47 +1,38 @@
+// 프로그래밍언어: C 계산기 코드 라인이 상승. 단어 사이 공백만 통과.
+// 좌/우 끝 벽 + 토큰을 1방향 발판으로, 천장(y<0) 닿으면 데미지.
+// 시작 1초간 화면 상단에 한글 경고 문구 표시.
+
 #include "proglang.h"
 #include "../player.h"
 #include <SDL_ttf.h>
 #include <string.h>
 
-#define WINDOW_W              1280
-#define WINDOW_H              720
-#define MAX_LINES             20
-#define MAX_BLOCKS_PER_LINE   24
-#define LEFT_MARGIN           40
-#define FONT_SIZE             40
-#define LINE_HEIGHT           40
-#define LINE_GAP_V            14
-#define RISE_SPEED            100.0f
+#define W            1280
+#define H            720
 
-// 라인 간격(LINE_HEIGHT + LINE_GAP_V)을 RISE_SPEED로 나눠
-// "한 라인 분량만큼 올라가는 데 걸리는 시간"을 스폰 간격으로 사용.
-// → 화면상에 정확히 LINE_GAP_V 만큼의 빈 공간이 항상 유지됨.
-#define SPAWN_INTERVAL        ((float)(LINE_HEIGHT + LINE_GAP_V) / RISE_SPEED)
+#define MAX_LINES    20
+#define MAX_BLOCKS   16
+#define MARGIN       40
+#define LINE_GAP     14
+#define RISE_SPEED   100.0f
 
-// 코드 한 줄 내의 '단어 한 덩어리' = 발판 단위.
-// 라인 내부 상대 x가 아닌 '화면 절대 x'로 저장 (충돌 판정을 직접 비교하기 위함).
+typedef struct { int x, w; bool wall; } Block;
+
 typedef struct {
-    int screen_x;   // 블록 좌측 화면 x 좌표
-    int width;     // 블록 가로폭 (TTF 측정값)
-} Block;
-
-// 화면을 올라가는 코드 한 줄.
-typedef struct {
-    const char* text;
-    Block blocks[MAX_BLOCKS_PER_LINE];
-    int block_count;
+    const char *text;
+    Block blocks[MAX_BLOCKS];
+    int n_blocks;
     float y;
     bool active;
 } CodeLine;
 
-// 패턴 데이터: C++ 콘솔 계산기 소스
-static const char* calc_code[] = {
-    "#include <iostream>",
-    "using namespace std;",
-    "int main() {",
+static const char *calc_code[] = {
+    "#include <stdio.h>",
+    "",
+    "int main(void) {",
     "    double a, b;",
     "    char op;",
-    "    cin >> a >> op >> b;",
+    "    scanf(\"%lf %c %lf\", &a, &op, &b);",
     "    double result = 0;",
     "    switch (op) {",
     "    case '+': result = a + b; break;",
@@ -49,176 +40,184 @@ static const char* calc_code[] = {
     "    case '*': result = a * b; break;",
     "    case '/': result = a / b; break;",
     "    }",
-    "    cout << result << endl;",
+    "    printf(\"%lf\\n\", result);",
     "    return 0;",
     "}",
 };
-#define CALC_LINES (int)(sizeof(calc_code) / sizeof(calc_code[0]))
+#define N_CODE (int)(sizeof(calc_code) / sizeof(*calc_code))
 
-static CodeLine lines[MAX_LINES];
-static float pattern_time;
-static int   next_spawn;
-static TTF_Font* code_font;
+static CodeLine  lines[MAX_LINES];
+static float     pattern_time, spawn_interval = 1.0f;
+static int       next_spawn, line_height = 50;
+static TTF_Font *code_font = NULL;
+static TTF_Font *warn_font = NULL;
 
-// l->text의 일부 구간[s, s+len)을 임시 버퍼에 복사 후 TTF_SizeUTF8로 측정.
-// 단어 블록 위치/폭을 정확히 계산하기 위해 부분 문자열 길이가 필요.
-static int seg_width(const char* s, int len) {
-    if (len <= 0) return 0;
+static int seg_w(const char *s, int len) {
+    if (len <= 0 || !code_font) return 0;
     char buf[128];
-    if (len > (int)sizeof(buf) - 1) len = (int)sizeof(buf) - 1;
-    memcpy(buf, s, len);
-    buf[len] = '\0';
-    int w = 0, h = 0;
+    if (len > 127) len = 127;
+    memcpy(buf, s, len); buf[len] = 0;
+    int w, h;
     TTF_SizeUTF8(code_font, buf, &w, &h);
     return w;
 }
 
-// 라인 텍스트를 토큰 단위 블록 배열로 변환
-// 공백/탭은 건너뛰며 x 커서만 전진, 비-공백 구간을 하나의 블록으로 등록.
-// 결과적으로 "단어 = 발판", "공백 = 통과 가능 구멍" 이 됨.
-static void build_blocks(CodeLine* l) {
-    l->block_count = 0;
+static void load_font(void) {
+    if (code_font) return;
+    const char *path = "C:/Windows/Fonts/consola.ttf";
+    TTF_Font *probe = TTF_OpenFont(path, 40);
+    if (!probe) { path = "C:/Windows/Fonts/malgun.ttf"; probe = TTF_OpenFont(path, 40); }
+
+    int size = 40;
+    if (probe) {
+        const char *longest = calc_code[0];
+        for (int i = 1; i < N_CODE; i++)
+            if (strlen(calc_code[i]) > strlen(longest)) longest = calc_code[i];
+        int lw, lh;
+        TTF_SizeUTF8(probe, longest, &lw, &lh);
+        TTF_CloseFont(probe);
+        if (lw > 0) size = 40 * (W - 2 * MARGIN) / lw;
+        if (size < 20) size = 20;
+        if (size > 96) size = 96;
+    }
+    code_font = TTF_OpenFont(path, size);
+    if (code_font) line_height = TTF_FontHeight(code_font) + 6;
+    spawn_interval = (line_height + LINE_GAP) / RISE_SPEED;
+
+    if (!warn_font) warn_font = TTF_OpenFont("C:/Windows/Fonts/malgun.ttf", 48);
+}
+
+static void add_block(CodeLine *l, int x, int w, bool wall) {
+    if (l->n_blocks >= MAX_BLOCKS) return;
+    Block *b = &l->blocks[l->n_blocks++];
+    b->x = x; b->w = w; b->wall = wall;
+}
+
+// 단일 토큰 라인("}", "{")은 양옆 벽 없이 통과 가능.
+static void build_line(CodeLine *l) {
+    l->n_blocks = 0;
     int len = (int)strlen(l->text);
-    int i = 0;
-    int x_cursor = 0;
+    if (len == 0 || !code_font) return;
 
-    while (i < len) {
-        // (1) 공백 구간: 위치만 전진, 블록 생성 X
-        int ws_start = i;
+    int tx[MAX_BLOCKS], tw[MAX_BLOCKS], n = 0, cursor = 0;
+    for (int i = 0; i < len; ) {
+        int ss = i;
         while (i < len && (l->text[i] == ' ' || l->text[i] == '\t')) i++;
-        if (i > ws_start) x_cursor += seg_width(l->text + ws_start, i - ws_start);
+        if (i > ss) cursor += seg_w(l->text + ss, i - ss);
         if (i >= len) break;
-
-        // (2) 토큰 구간: 비-공백 문자 연속 → 한 블록으로 등록
-        int tok_start = i;
+        int ts = i;
         while (i < len && l->text[i] != ' ' && l->text[i] != '\t') i++;
-        int tw = seg_width(l->text + tok_start, i - tok_start);
+        int width = seg_w(l->text + ts, i - ts);
+        if (n < MAX_BLOCKS) { tx[n] = MARGIN + cursor; tw[n] = width; n++; }
+        cursor += width;
+    }
+    if (n == 0) return;
 
-        if (l->block_count < MAX_BLOCKS_PER_LINE) {
-            l->blocks[l->block_count].screen_x = LEFT_MARGIN + x_cursor;
-            l->blocks[l->block_count].width = tw;
-            l->block_count++;
-        }
-        x_cursor += tw;
+    bool walls = (n >= 2);
+    if (walls) add_block(l, 0, tx[0], true);
+    for (int k = 0; k < n; k++) add_block(l, tx[k], tw[k], false);
+    if (walls) {
+        int end = tx[n-1] + tw[n-1];
+        if (end < W) add_block(l, end, W - end, true);
     }
 }
 
-// ----------------------------------------------------------------------------
-// 패턴 시작 시 초기화
-// ----------------------------------------------------------------------------
-// 디스패처(phase1.c)가 패턴 진입 시 1회 호출.
-// 폰트는 최초 1회만 로드하여 캐시 (재시작 시에도 재활용).
 void proglang_start(void) {
-    pattern_time = 0.0f;
+    pattern_time = 0;
     next_spawn = 0;
     for (int i = 0; i < MAX_LINES; i++) lines[i].active = false;
-    if (!code_font) code_font = TTF_OpenFont("C:/Windows/Fonts/consola.ttf", FONT_SIZE);
+    load_font();
 }
 
-// ----------------------------------------------------------------------------
-// 라인 슬롯 하나에 calc_code[idx] 줄을 배치
-// ----------------------------------------------------------------------------
-// 빈 슬롯을 선형 탐색해 첫 자리에 삽입. 초기 y는 화면 아래쪽 바깥(+10px 여유)에서 시작.
-static void spawn(int idx) {
-    if (idx >= CALC_LINES) return;
-    for (int i = 0; i < MAX_LINES; i++) {
-        if (!lines[i].active) {
-            lines[i].text = calc_code[idx];
-            lines[i].y = (float)WINDOW_H + 10.0f;
-            lines[i].active = true;
-            build_blocks(&lines[i]);
-            return;
-        }
-    }
-}
-
-// ----------------------------------------------------------------------------
-// 플레이어 중심 x가 특정 블록의 가로 범위 위에 걸쳐 있는지
-// ----------------------------------------------------------------------------
-// 착지 판정의 첫 단계 — "수평 범위 안인가?" 만 확인.
-// 세로 충돌은 호출 측에서 별도 처리.
-static bool block_center_over(const Block* b) {
-    int px_center = (int)(player.x + PLAYER_W * 0.5f);
-    return px_center >= b->screen_x && px_center < b->screen_x + b->width;
-}
-
-// ----------------------------------------------------------------------------
-// 매 프레임 업데이트
-// ----------------------------------------------------------------------------
 void proglang_update(float dt) {
     pattern_time += dt;
 
-    // (1) 스폰: 누적 시간이 next_spawn번째 라인의 예약 시점에 도달했으면 스폰.
-    //     while 루프로 처리 → dt가 커서 한 프레임에 여러 라인이 밀려도 한꺼번에 따라잡음.
-    while (next_spawn < CALC_LINES &&
-        (float)next_spawn * SPAWN_INTERVAL <= pattern_time) {
-        spawn(next_spawn);
+    while (next_spawn < N_CODE && next_spawn * spawn_interval <= pattern_time) {
+        for (int i = 0; i < MAX_LINES; i++) {
+            if (lines[i].active) continue;
+            lines[i].text   = calc_code[next_spawn];
+            lines[i].y      = (float)H + 10.0f;
+            lines[i].active = true;
+            build_line(&lines[i]);
+            break;
+        }
         next_spawn++;
     }
 
-    // (2) 라인 상승 + 화면 위로 완전히 벗어나면 슬롯 해제
     for (int i = 0; i < MAX_LINES; i++) {
         if (!lines[i].active) continue;
         lines[i].y -= RISE_SPEED * dt;
-        if (lines[i].y + LINE_HEIGHT < 0) lines[i].active = false;
+        if (lines[i].y + line_height < 0) lines[i].active = false;
     }
 
-    // (3) 착지 판정: 하강 중일 때만 검사 (상승 중 머리로 박는 건 통과 허용)
-    //     플레이어 발(feet) y 가 어떤 블록의 윗면(top) 부근에 닿으면 그 블록 위에 안착.
-    if (player.vy >= 0.0f) {
+    // 1방향 발판: 떨어지는 중 발 중심 아래 가장 높은 블록 표면으로 스냅.
+    if (player.vy >= 0) {
         float feet = player.y + PLAYER_H;
+        int   pcx  = (int)(player.x + PLAYER_W / 2);
+        float best = 0; bool found = false;
         for (int i = 0; i < MAX_LINES; i++) {
             if (!lines[i].active) continue;
-            for (int j = 0; j < lines[i].block_count; j++) {
-                if (!block_center_over(&lines[i].blocks[j])) continue;
-                float top = lines[i].y;
-                // feet가 라인 세로 범위 [top, top+LINE_HEIGHT] 안에 있을 때만 착지.
-                // 라인 두께가 LINE_HEIGHT라 약간의 두께 마진이 있음.
-                if (feet < top || feet > top + LINE_HEIGHT) continue;
-                player.y = top - PLAYER_H;
-                player.vy = 0.0f;
-                player.on_ground = true;
-                player.jump_count = 0;   // 2단 점프 횟수 리셋
+            float top = lines[i].y;
+            if (feet < top || feet > top + line_height) continue;
+            if (found && top >= best) continue;
+            for (int j = 0; j < lines[i].n_blocks; j++) {
+                Block *b = &lines[i].blocks[j];
+                if (pcx >= b->x && pcx < b->x + b->w) { best = top; found = true; break; }
             }
+        }
+        if (found) {
+            player.y = best - PLAYER_H;
+            player.vy = 0;
+            player.on_ground = true;
+            player.jump_count = 0;
         }
     }
 
-    // (4) 화면 최상단(y=0) 도달 시 피격.
-    //     상승하는 라인에 떠밀려 천장에 닿는 즉시 데미지.
-    //     무적/깜빡임은 player_damage 내부에서 처리되므로 여기선 별도 플래그 X.
-    if (player.y <= 0.0f) {
-        player.y = 0.0f;
-        player.vy = 0.0f;
+    if (player.y < 0) {
+        player.y = 0;
+        if (player.vy < 0) player.vy = 0;
         player_damage();
     }
 }
 
-// ----------------------------------------------------------------------------
-// 패턴 종료 조건
-// ----------------------------------------------------------------------------
-// 모든 calc_code 줄이 스폰됐고, 그 후 화면에 남은 라인까지 모두 사라졌을 때 종료.
 bool proglang_finished(void) {
-    if (next_spawn < CALC_LINES) return false;
+    if (next_spawn < N_CODE) return false;
     for (int i = 0; i < MAX_LINES; i++) if (lines[i].active) return false;
     return true;
 }
 
-// ----------------------------------------------------------------------------
-// 렌더링
-// ----------------------------------------------------------------------------
-// 활성 라인을 흰색으로 한 줄씩 TTF 렌더 → 텍스처 생성 → blit → 해제.
-// 매 프레임 텍스처를 새로 만드는 단순 구현 (라인 수가 적어 성능 부담 미미).
-void proglang_draw(SDL_Renderer* r) {
+// 텍스트를 (left, top)에 흰색으로 렌더. 빈 문자열/폰트 없음이면 무시.
+static void blit_text(SDL_Renderer *r, TTF_Font *f, const char *s, int left, int top) {
+    if (!f || !s || !*s) return;
     SDL_Color white = { 255, 255, 255, 255 };
+    SDL_Surface *surf = TTF_RenderUTF8_Blended(f, s, white);
+    if (!surf) return;
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(r, surf);
+    SDL_Rect dst = { left, top, surf->w, surf->h };
+    SDL_RenderCopy(r, tex, NULL, &dst);
+    SDL_FreeSurface(surf);
+    SDL_DestroyTexture(tex);
+}
+
+void proglang_draw(SDL_Renderer *r) {
+    if (!code_font) return;
+    SDL_SetRenderDrawColor(r, 0, 80, 100, 255);
+
+    int text_dy = (line_height - TTF_FontHeight(code_font)) / 2;
     for (int i = 0; i < MAX_LINES; i++) {
         if (!lines[i].active) continue;
-        SDL_Surface* surf = TTF_RenderUTF8_Blended(code_font, lines[i].text, white);
-        if (!surf) continue;
-        SDL_Texture* tex = SDL_CreateTextureFromSurface(r, surf);
-        // 텍스트를 LINE_HEIGHT 박스 내부에 수직 중앙 정렬.
-        SDL_Rect dst = { LEFT_MARGIN, (int)lines[i].y + (LINE_HEIGHT - surf->h) / 2, surf->w, surf->h };
-        SDL_RenderCopy(r, tex, NULL, &dst);
-        SDL_FreeSurface(surf);
-        SDL_DestroyTexture(tex);
+        for (int j = 0; j < lines[i].n_blocks; j++) {
+            Block *b = &lines[i].blocks[j];
+            if (!b->wall) continue;
+            SDL_Rect wr = { b->x, (int)lines[i].y, b->w, line_height };
+            SDL_RenderFillRect(r, &wr);
+        }
+        blit_text(r, code_font, lines[i].text, MARGIN, (int)lines[i].y + text_dy);
+    }
+
+    if (pattern_time < 1.0f && warn_font) {
+        int ww, wh;
+        TTF_SizeUTF8(warn_font, "화면 위에 닿지마", &ww, &wh);
+        blit_text(r, warn_font, "화면 위에 닿지마", (W - ww) / 2, 80);
     }
 }

@@ -6,9 +6,6 @@
 #include "game_state.h"
 #include "settings.h"
 
-#define WINDOW_W 1280
-#define WINDOW_H 720
-
 // 슬라이더 공통 좌표
 #define SLIDER_X        500
 #define SLIDER_W        500

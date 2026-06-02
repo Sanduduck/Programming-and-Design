@@ -1,7 +1,7 @@
 #ifndef PHASE3_WEBSERVER_H
 #define PHASE3_WEBSERVER_H
 
-// 웹서버프로그래밍 패턴 (정복래 교수) — TODO: 패턴 설계 확정 후 구현
+// 웹서버프로그래밍 패턴 (정복래 교수) — Node.js URL 낙하 패턴
 
 #include <SDL.h>
 #include <stdbool.h>

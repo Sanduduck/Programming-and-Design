@@ -4,9 +4,6 @@
 #include "ui_menu.h"
 #include "game_state.h"
 
-#define WINDOW_W 1280
-#define WINDOW_H 720
-
 // 메뉴 박스 좌표 (draw / 마우스 클릭 둘 다 공유)
 #define BOX_W       280
 #define BOX_H       60

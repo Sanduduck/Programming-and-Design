@@ -2,13 +2,16 @@
 #define PHASE2_H
 
 // Phase 2 (2학년) 패턴 모듈 디스패처
-// 담당 과목: 데이터통신
+// 담당 과목: 컴퓨터구조, 데이터통신, 기초전자
 
 #include <SDL.h>
 #include <stdbool.h>
 
 typedef enum {
-    PHASE2_DATACOMM = 0,      // 데이터통신 — OSI 7계층 발판 오르기
+    PHASE2_COMSTR = 0,        // 컴퓨터구조 — 패턴 설계 미정
+    PHASE2_DATA,              // 데이터통신 — OSI 7계층 발판 오르기
+    PHASE2_ELEC,              // 기초전자 — 패턴 설계 미정
+    PHASE2_PDESIGN,           // 프로그래밍설계 — 지시어 셀 이동
     PHASE2_PATTERN_COUNT
 } Phase2PatternId;
 

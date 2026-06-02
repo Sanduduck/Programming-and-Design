@@ -54,10 +54,28 @@
     <ClCompile Include="..\src\phase1\proglang.c">
       <Filter>소스 파일\phase1</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\phase1\engdesign.c">
+      <Filter>소스 파일\phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase1\math.c">
+      <Filter>소스 파일\phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase1\physics.c">
+      <Filter>소스 파일\phase1</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\phase2.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\phase2\datacomm.c">
+    <ClCompile Include="..\src\phase2\comstr.c">
+      <Filter>소스 파일\phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase2\data.c">
+      <Filter>소스 파일\phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase2\elec.c">
+      <Filter>소스 파일\phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\phase2\pdesign.c">
       <Filter>소스 파일\phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\src\phase3.c">
@@ -119,10 +137,28 @@
     <ClInclude Include="..\src\phase1\proglang.h">
       <Filter>헤더 파일\phase1</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\phase1\engdesign.h">
+      <Filter>헤더 파일\phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase1\math.h">
+      <Filter>헤더 파일\phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase1\physics.h">
+      <Filter>헤더 파일\phase1</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\phase2.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\phase2\datacomm.h">
+    <ClInclude Include="..\src\phase2\comstr.h">
+      <Filter>헤더 파일\phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase2\data.h">
+      <Filter>헤더 파일\phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase2\elec.h">
+      <Filter>헤더 파일\phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\phase2\pdesign.h">
       <Filter>헤더 파일\phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\src\phase3.h">

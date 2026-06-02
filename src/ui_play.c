@@ -10,10 +10,6 @@
 #include "phase3.h"
 #include "settings.h"
 
-#define WINDOW_W   1280
-#define WINDOW_H   720
-#define FLOOR_Y    600
-
 // HP 바 (오른쪽 위, 4등분)
 #define HP_BAR_X   1020
 #define HP_BAR_Y   20
@@ -45,7 +41,7 @@ void handle_play_event(SDL_Event *e) {
         }
         if (e->key.keysym.sym == SDLK_w) {
             active_phase = ACTIVE_PHASE_2;
-            phase2_start(PHASE2_DATACOMM);
+            phase2_start(PHASE2_COMSTR);
         }
         if (e->key.keysym.sym == SDLK_e) {
             active_phase = ACTIVE_PHASE_3;
@@ -54,11 +50,17 @@ void handle_play_event(SDL_Event *e) {
 
         // 과목 선택 — 현재 학년에 따라 숫자 키 의미가 달라짐
         if (active_phase == ACTIVE_PHASE_1) {
-            // 1학년: 1=프로그래밍언어
+            // 1학년: 1=프로그래밍언어 / 2=공학설계입문 / 3=대학수학 / 4=대학물리학
             if (e->key.keysym.sym == SDLK_1) { phase1_start(PHASE1_PROGLANG); }
+            if (e->key.keysym.sym == SDLK_2) { phase1_start(PHASE1_ENGDESIGN); }
+            if (e->key.keysym.sym == SDLK_3) { phase1_start(PHASE1_MATH); }
+            if (e->key.keysym.sym == SDLK_4) { phase1_start(PHASE1_PHYSICS); }
         } else if (active_phase == ACTIVE_PHASE_2) {
-            // 2학년: 1=데이터통신
-            if (e->key.keysym.sym == SDLK_1) { phase2_start(PHASE2_DATACOMM); }
+            // 2학년: 1=컴퓨터구조 / 2=데이터통신 / 3=기초전자 / 4=프로그래밍설계
+            if (e->key.keysym.sym == SDLK_1) { phase2_start(PHASE2_COMSTR); }
+            if (e->key.keysym.sym == SDLK_2) { phase2_start(PHASE2_DATA); }
+            if (e->key.keysym.sym == SDLK_3) { phase2_start(PHASE2_ELEC); }
+            if (e->key.keysym.sym == SDLK_4) { phase2_start(PHASE2_PDESIGN); }
         } else if (active_phase == ACTIVE_PHASE_3) {
             // 3학년: 1=블록체인 / 2=OS / 3=ML / 4=웹서버
             if (e->key.keysym.sym == SDLK_1) { phase3_start(PHASE3_BLOCKCHAIN); }

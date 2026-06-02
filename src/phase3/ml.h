@@ -1,7 +1,8 @@
 #ifndef PHASE3_ML_H
 #define PHASE3_ML_H
 
-// 머신러닝 패턴 (김인겸 교수) — TODO: 패턴 설계 확정 후 구현
+// 머신러닝 패턴 (김인겸 교수)
+// 로봇 얼굴이 '허거덩'을 타자기 효과로 생성 → 낙하 → 자모 7조각으로 분해, 3회 반복
 
 #include <SDL.h>
 #include <stdbool.h>

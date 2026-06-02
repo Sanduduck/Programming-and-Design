@@ -3,10 +3,6 @@
 #include "player.h"
 #include "settings.h"
 
-#define WINDOW_W       1280
-#define FLOOR_Y        600       // 바닥 평지 윗면 y좌표
-#define PLAYER_WIDTH   50
-#define PLAYER_HEIGHT  50
 #define MOVE_SPEED     350.0f    // 좌우 이동 속도 (px/s)
 #define JUMP_SPEED     650.0f    // 점프 초속도 (px/s)
 #define GRAVITY        1600.0f   // 중력 가속도 (px/s^2)
@@ -15,7 +11,7 @@ Player player;
 
 void init_player(void) {
     player.x = 100.0f;
-    player.y = (float)(FLOOR_Y - PLAYER_HEIGHT);
+    player.y = (float)(FLOOR_Y - PLAYER_H);
     player.vx = 0.0f;
     player.vy = 0.0f;
     player.hp = 4;
@@ -41,11 +37,11 @@ void update_player(float dt) {
 
     // 좌우 화면 경계
     if (player.x < 0) player.x = 0;
-    if (player.x + PLAYER_WIDTH > WINDOW_W) player.x = (float)(WINDOW_W - PLAYER_WIDTH);
+    if (player.x + PLAYER_W > WINDOW_W) player.x = (float)(WINDOW_W - PLAYER_W);
 
     // 바닥 충돌 처리
-    if (player.y + PLAYER_HEIGHT >= FLOOR_Y) {
-        player.y = (float)(FLOOR_Y - PLAYER_HEIGHT);
+    if (player.y + PLAYER_H >= FLOOR_Y) {
+        player.y = (float)(FLOOR_Y - PLAYER_H);
         player.vy = 0.0f;
         player.on_ground = true;
         player.jump_count = 0;
@@ -63,7 +59,7 @@ void draw_player(SDL_Renderer *r) {
         return;
     }
     // 임시 사각형 (나중에 스프라이트로 교체)
-    SDL_Rect rect = { (int)player.x, (int)player.y, PLAYER_WIDTH, PLAYER_HEIGHT };
+    SDL_Rect rect = { (int)player.x, (int)player.y, (int)PLAYER_W, (int)PLAYER_H };
     SDL_SetRenderDrawColor(r, 135, 206, 235, 255);   // 하늘색
     SDL_RenderFillRect(r, &rect);
 }

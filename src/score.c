@@ -7,8 +7,6 @@
 
 int total_score = 0;
 
-#define WINDOW_WIDTH 1280
-
 void init_score(void) {
     total_score = 0;
 }
@@ -23,7 +21,7 @@ void check_score_for_obstacles(void) {
         if (!obstacles[i].active) continue;
         if (obstacles[i].scored) continue;
         if (obstacles[i].x + obstacles[i].width < 0 ||
-            obstacles[i].x > WINDOW_WIDTH) {
+            obstacles[i].x > WINDOW_W) {
             // TODO: 패턴 데이터에서 score_per_obstacle 가져오기
             add_score(10);
             obstacles[i].scored = true;
