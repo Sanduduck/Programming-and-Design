@@ -1,6 +1,3 @@
-#ifndef OBSTACLE_H
-#define OBSTACLE_H
-
 #include <SDL.h>
 #include "types.h"
 
@@ -12,5 +9,3 @@ void init_obstacles(void);
 void spawn_obstacle(float x, float y, float vx, float vy, int w, int h, int pattern_id);
 void update_obstacles(float dt);
 void draw_obstacles(SDL_Renderer *r);
-
-#endif
