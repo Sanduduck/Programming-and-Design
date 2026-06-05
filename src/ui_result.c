@@ -3,9 +3,6 @@
 #include "ui_result.h"
 #include "game_state.h"
 
-#define WINDOW_W 1280
-#define WINDOW_H 720
-
 void handle_result_event(SDL_Event *e) {
     if (e->type == SDL_KEYDOWN) {
         if (e->key.keysym.sym == SDLK_RETURN) {

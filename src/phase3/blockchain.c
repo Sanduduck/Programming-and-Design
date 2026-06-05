@@ -3,7 +3,6 @@
 #include <math.h>
 
 #define MAX_BITCOINS 32
-#define WINDOW_H 720
 #define FALL_GRAVITY 300.0f // 비트코인 가속도 (px/s^2) — 클수록 빨리 떨어짐
 
 // 화면에 실제로 떠 있는 비트코인 한 개의 상태

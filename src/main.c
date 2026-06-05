@@ -9,8 +9,6 @@
 
 #include "game_state.h"
 
-#define WINDOW_WIDTH  1280
-#define WINDOW_HEIGHT 720
 #define FPS 60
 
 int main(int argc, char *argv[]) {
@@ -27,7 +25,7 @@ int main(int argc, char *argv[]) {
     SDL_Window *window = SDL_CreateWindow(
         "정통에서 살아남기",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        WINDOW_WIDTH, WINDOW_HEIGHT,
+        WINDOW_W, WINDOW_H,
         SDL_WINDOW_SHOWN
     );
 

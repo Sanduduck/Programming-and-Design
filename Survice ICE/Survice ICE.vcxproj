@@ -139,20 +139,23 @@ xcopy /Y /D "C:\Users\alon8\Desktop\C_Programming\SDL2_ttf-2.22.0\lib\x64\*.dll"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\collision.c" />
     <ClCompile Include="..\src\game_state.c" />
     <ClCompile Include="..\src\main.c" />
-    <ClCompile Include="..\src\obstacle.c" />
     <ClCompile Include="..\src\pattern.c" />
-    <ClCompile Include="..\src\phase1.c" />
     <ClCompile Include="..\src\phase1\proglang.c" />
-    <ClCompile Include="..\src\phase2.c" />
-    <ClCompile Include="..\src\phase2\datacomm.c" />
-    <ClCompile Include="..\src\phase3.c" />
+    <ClCompile Include="..\src\phase1\engdesign.c" />
+    <ClCompile Include="..\src\phase1\math.c" />
+    <ClCompile Include="..\src\phase1\physics.c" />
+    <ClCompile Include="..\src\phase2\comstr.c" />
+    <ClCompile Include="..\src\phase2\data.c" />
+    <ClCompile Include="..\src\phase2\elec.c" />
+    <ClCompile Include="..\src\phase2\pdesign.c" />
     <ClCompile Include="..\src\phase3\blockchain.c" />
     <ClCompile Include="..\src\phase3\ml.c" />
     <ClCompile Include="..\src\phase3\os.c" />
     <ClCompile Include="..\src\phase3\webserver.c" />
+    <ClCompile Include="..\src\phase4\virus.c" />
+    <ClCompile Include="..\src\phase4\signal.c" />
     <ClCompile Include="..\src\player.c" />
     <ClCompile Include="..\src\score.c" />
     <ClCompile Include="..\src\settings.c" />
@@ -163,19 +166,22 @@ xcopy /Y /D "C:\Users\alon8\Desktop\C_Programming\SDL2_ttf-2.22.0\lib\x64\*.dll"
     <ClCompile Include="..\src\ui_settings.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\collision.h" />
     <ClInclude Include="..\src\game_state.h" />
-    <ClInclude Include="..\src\obstacle.h" />
     <ClInclude Include="..\src\pattern.h" />
-    <ClInclude Include="..\src\phase1.h" />
     <ClInclude Include="..\src\phase1\proglang.h" />
-    <ClInclude Include="..\src\phase2.h" />
-    <ClInclude Include="..\src\phase2\datacomm.h" />
-    <ClInclude Include="..\src\phase3.h" />
+    <ClInclude Include="..\src\phase1\engdesign.h" />
+    <ClInclude Include="..\src\phase1\math.h" />
+    <ClInclude Include="..\src\phase1\physics.h" />
+    <ClInclude Include="..\src\phase2\comstr.h" />
+    <ClInclude Include="..\src\phase2\data.h" />
+    <ClInclude Include="..\src\phase2\elec.h" />
+    <ClInclude Include="..\src\phase2\pdesign.h" />
     <ClInclude Include="..\src\phase3\blockchain.h" />
     <ClInclude Include="..\src\phase3\ml.h" />
     <ClInclude Include="..\src\phase3\os.h" />
     <ClInclude Include="..\src\phase3\webserver.h" />
+    <ClInclude Include="..\src\phase4\virus.h" />
+    <ClInclude Include="..\src\phase4\signal.h" />
     <ClInclude Include="..\src\player.h" />
     <ClInclude Include="..\src\score.h" />
     <ClInclude Include="..\src\settings.h" />

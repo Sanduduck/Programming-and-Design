@@ -3,11 +3,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <string.h>
 #include "score.h"
-#include "obstacle.h"
 
 int total_score = 0;
-
-#define WINDOW_WIDTH 1280
 
 void init_score(void) {
     total_score = 0;
@@ -15,21 +12,6 @@ void init_score(void) {
 
 void add_score(int amount) {
     total_score += amount;
-}
-
-void check_score_for_obstacles(void) {
-    // 화면 왼쪽 밖으로 나간 장애물 중 아직 점수 부여 안된 것에 점수 부여
-    for (int i = 0; i < MAX_OBSTACLES; i++) {
-        if (!obstacles[i].active) continue;
-        if (obstacles[i].scored) continue;
-        if (obstacles[i].x + obstacles[i].width < 0 ||
-            obstacles[i].x > WINDOW_WIDTH) {
-            // TODO: 패턴 데이터에서 score_per_obstacle 가져오기
-            add_score(10);
-            obstacles[i].scored = true;
-            obstacles[i].active = false;
-        }
-    }
 }
 
 void calc_grade(int score, int hp, char *out_grade) {

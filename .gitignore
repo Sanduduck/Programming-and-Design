@@ -1,0 +1,35 @@
+# ── Visual Studio 개인 설정 / IDE 캐시 (커밋 금지) ──
+.vs/
+*.vcxproj.user
+*.suo
+*.wsuo
+*.user
+
+# ── 빌드 산출물 ──
+[Bb]in/
+[Oo]bj/
+x64/
+x86/
+Win32/
+[Dd]ebug/
+[Rr]elease/
+*.obj
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.lib
+*.tlog
+*.log
+*.lastbuildstate
+*.recipe
+*.ipch
+*.vsidx
+
+# ── 기타 ──
+*.aps
+*.ncb
+*.opensdf
+*.sdf

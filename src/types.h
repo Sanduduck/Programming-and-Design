@@ -3,6 +3,11 @@
 
 #include <stdbool.h>
 
+// 화면 크기 (모든 모듈 공용)
+#define WINDOW_W 1280
+#define WINDOW_H 720
+#define FLOOR_Y  600    // 바닥 평지 윗면 y좌표 (player + 모든 패턴 공용)
+
 // 게임 상태
 typedef enum {
     STATE_MAIN_MENU,
@@ -22,25 +27,6 @@ typedef struct {
     int invincible_timer;
     bool on_ground;
 } Player;
-
-// 장애물
-typedef struct {
-    float x, y;
-    float vx, vy;
-    int width, height;
-    bool active;
-    bool scored;
-    int pattern_id;
-} Obstacle;
-
-// 패턴
-typedef struct {
-    int id;
-    int phase;
-    int obstacle_count;
-    int score_per_obstacle;
-    bool drop_heal_item;
-} Pattern;
 
 // 조작 방식
 typedef enum {

@@ -1,95 +1,112 @@
-# 수정 내역 정리
+# VS Code 개발 환경 설정 정리
 
-`src/` 폴더의 `.c`/`.h` 파일에서 오류 검출 코드와 더미 데이터를 모두 제거했다.
-
----
-
-## 1. `src/main.c`
-
-SDL/TTF 초기화 실패 검사 코드를 모두 제거.
-
-- `SDL_Init` 실패 시 `printf` 출력 + `return 1` 처리 제거
-- `TTF_Init` 실패 시 `SDL_Quit()` + `return 1` 처리 제거
-- `SDL_CreateWindow` 실패 시 `printf` + 정리 후 `return 1` 처리 제거
-- `SDL_CreateRenderer` 실패 시 `printf` + 정리 후 `return 1` 처리 제거
-
-→ 초기화 함수만 일렬로 호출하는 형태로 단순화.
+> 「정통에서 살아남기」 프로젝트의 VS Code 설정 + 익스텐션 현황.
+> 새 팀원이 동일 환경을 맞출 때 참고. (기준일: 2026-06-06)
 
 ---
 
-## 2. `src/ui_menu.c`
+## VS Code 버전
 
-폰트 관련 NULL 체크와 실패 메시지 제거.
-
-- `load_font()` 의 `if (!menu_font) printf("폰트 로드 실패: ...")` 제거
-- `draw_text_centered()` 의 `if (!menu_font) return;` 제거
-- `draw_text_centered()` 의 `if (!surf) return;` (TTF Surface NULL 체크) 제거
-- 더 이상 `printf` 가 없으므로 `#include <stdio.h>` 제거
-
----
-
-## 3. `src/ui_ranking.c`
-
-더미 랭킹 데이터와 NULL 체크 제거.
-
-- 랭킹 배열 더미 초기값 제거
-  ```c
-  // 제거 전
-  static RankEntry ranking[RANK_COUNT] = {
-      { -1, "" }, { -1, "" }, ... { -1, "" }
-  };
-
-  // 제거 후
-  static RankEntry ranking[RANK_COUNT];
-  ```
-- `load_fonts()` 의 `if (!title_font || !item_font) printf(...)` 제거
-- `draw_text_centered()` 의 `if (!font) return;` 제거
-- `draw_text_centered()` 의 `if (!surf) return;` 제거
+| 항목 | 값 |
+|------|-----|
+| Version | 1.123.0 |
+| Commit | 6a44c352bd24569c417e530095901b649960f9f8 |
+| Arch | x64 |
 
 ---
 
-## 4. `src/ui_result.c`
+## 설치된 익스텐션
 
-표시되지도 않는 더미 학점 계산 호출 제거.
+| 익스텐션 | ID | 버전 | 용도 |
+|----------|-----|------|------|
+| C/C++ | `ms-vscode.cpptools` | 1.32.2 | C 언어 IntelliSense, 디버깅 (cppvsdbg) |
+| Python | `ms-python.python` | 2026.4.0 | Python 언어 지원 |
+| Pylance | `ms-python.vscode-pylance` | 2026.2.1 | Python 타입 체크 / IntelliSense |
+| Python Debugger | `ms-python.debugpy` | 2026.6.0 | Python 디버깅 |
+| Python Environments | `ms-python.vscode-python-envs` | 1.30.0 | Python 가상환경 관리 |
+| Korean Language Pack | `ms-ceintl.vscode-language-pack-ko` | 1.123.2026060414 | VS Code UI 한글화 |
+| Claude Code | `anthropic.claude-code` | 2.1.165 | AI 코딩 보조 |
 
-- 다음 더미 코드 제거
-  ```c
-  char grade[4];
-  calc_grade(total_score, player.hp, grade);
-  (void)grade;
-  ```
-- 더 이상 사용하지 않는 `#include "player.h"`, `#include "score.h"` 제거
+> 이 프로젝트는 **C 언어 기반**이라 실제로 필요한 건 `ms-vscode.cpptools` 와 `anthropic.claude-code`.
+> Python 계열 4종은 다른 작업용으로 보이며 본 프로젝트 빌드에는 무관.
 
----
+### 재설치 (한 번에)
 
-## 5. `src/collision.c`
-
-플레이어 크기 더미값 제거.
-
-- `// 임시 플레이어 크기 (40 x 60)` 주석 제거
-- `int pw = 40, ph = 60;` → `int pw = 50, ph = 50;`
-  (`player.c` 의 `PLAYER_WIDTH/HEIGHT` 값과 일치시킴)
-
----
-
-## 변경되지 않은 파일
-
-- `types.h`
-- `game_state.h`, `game_state.c`
-- `player.h`, `player.c`
-- `obstacle.h`, `obstacle.c`
-- `pattern.h`, `pattern.c`
-- `collision.h`
-- `score.h`, `score.c`
-- `ui_menu.h`, `ui_play.h`, `ui_play.c`
-- `ui_result.h`
-- `ui_ranking.h`
-- `ui_settings.h`, `ui_settings.c`
+```powershell
+code --install-extension ms-vscode.cpptools
+code --install-extension anthropic.claude-code
+code --install-extension ms-ceintl.vscode-language-pack-ko
+# (Python 작업도 한다면)
+code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension ms-python.debugpy
+code --install-extension ms-python.vscode-python-envs
+```
 
 ---
 
-## 참고
+## 사용자(User) 설정
 
-- `obstacle.c`, `pattern.c` 의 `(void)dt;` 같은 미사용 인자 처리는 컴파일 경고 회피용으로 둠
-  (오류 검출도 더미 데이터도 아님).
-- `player.c` 의 `if (player.invincible_timer > 0) return;` 은 무적 시간 게임 로직이므로 그대로 둠.
+위치: `%APPDATA%\Code\User\settings.json`
+
+```json
+{
+    "claudeCode.preferredLocation": "panel",
+    "workbench.colorTheme": "Dark Modern"
+}
+```
+
+| 키 | 값 | 의미 |
+|----|-----|------|
+| `claudeCode.preferredLocation` | `panel` | Claude Code를 하단 패널에 표시 |
+| `workbench.colorTheme` | `Dark Modern` | 다크 테마 |
+
+> 사용자 keybindings.json 은 없음 (기본 단축키 사용).
+
+---
+
+## 워크스페이스(`.vscode/`) 설정
+
+워크스페이스 전용 `settings.json` 은 **없음**. 아래 3개 파일만 존재.
+
+### 1. `c_cpp_properties.json` — IntelliSense 구성
+
+| 항목 | 값 |
+|------|-----|
+| name | Win32 |
+| includePath | `src`, `SDL2-2.30.12/include`, `SDL2_ttf-2.22.0/include` |
+| defines | `_DEBUG`, `UNICODE`, `_UNICODE` |
+| compilerPath | `cl.exe` (MSVC) |
+| cStandard | c17 |
+| cppStandard | c++17 |
+| intelliSenseMode | windows-msvc-x64 |
+
+### 2. `tasks.json` — 빌드 태스크 (MSBuild)
+
+빌드 도구: `MSBuild.exe` (VS 2022 Community)
+대상 프로젝트: `Survice ICE\Survice ICE.vcxproj`
+
+| 태스크 label | 동작 | 비고 |
+|--------------|------|------|
+| `MSBuild: Debug x64` | Debug 빌드 | **기본 빌드 태스크** (`Ctrl+Shift+B`) |
+| `MSBuild: Release x64` | Release 빌드 | |
+| `MSBuild: Rebuild Debug x64` | Debug 전체 재빌드 | |
+| `MSBuild: Clean` | 빌드 산출물 정리 | |
+
+### 3. `launch.json` — 디버그/실행 구성
+
+산출물: `Survice ICE\x64\Debug\Survice ICE.exe`
+디버거 타입: `cppvsdbg`, 사전 태스크: `MSBuild: Debug x64`
+
+| 구성 name | 동작 |
+|-----------|------|
+| `Debug (cppvsdbg, x64)` | 디버깅 실행 (F5) |
+| `Run (no debug)` | 디버깅 없이 실행 (`noDebug: true`) |
+
+---
+
+## 빌드 / 실행 흐름 요약
+
+1. `Ctrl+Shift+B` → `MSBuild: Debug x64` 태스크로 빌드
+2. `F5` → 빌드 후 `Survice ICE.exe` 디버깅 실행
+3. 실제 컴파일·링크 설정(SDL2 링크, `winmm.lib` 등)은 VS 프로젝트(`Survice ICE.vcxproj`)에 있음 — `.vcxproj` 가 단일 진실 공급원(SSOT)
