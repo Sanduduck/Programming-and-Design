@@ -2,16 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "MSBuild: Debug x64",
+            "label": "Build (MSVC)",
             "type": "shell",
-            "command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "command": "cmd",
             "args": [
-                "${workspaceFolder}\\Survice ICE\\Survice ICE.vcxproj",
-                "/t:Build",
-                "/p:Configuration=Debug",
-                "/p:Platform=x64",
-                "/nologo",
-                "/v:minimal"
+                "/c",
+                "call \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && if not exist build mkdir build && cl /nologo /utf-8 /Zi /MD /Fe:build\\game.exe /Fo:build\\ /I src /I \"SDL2-2.30.12\\include\" /I \"SDL2_ttf-2.22.0\\include\" src\\*.c src\\phase1\\*.c src\\phase2\\*.c src\\phase3\\*.c src\\phase4\\*.c /link /LIBPATH:\"SDL2-2.30.12\\lib\\x64\" /LIBPATH:\"SDL2_ttf-2.22.0\\lib\\x64\" SDL2main.lib SDL2.lib SDL2_ttf.lib winmm.lib shell32.lib /SUBSYSTEM:CONSOLE && copy /Y \"SDL2-2.30.12\\lib\\x64\\SDL2.dll\" build\\ && copy /Y \"SDL2_ttf-2.22.0\\lib\\x64\\SDL2_ttf.dll\" build\\"
             ],
             "group": {
                 "kind": "build",
@@ -24,44 +20,12 @@
             }
         },
         {
-            "label": "MSBuild: Release x64",
+            "label": "Clean",
             "type": "shell",
-            "command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "command": "cmd",
             "args": [
-                "${workspaceFolder}\\Survice ICE\\Survice ICE.vcxproj",
-                "/t:Build",
-                "/p:Configuration=Release",
-                "/p:Platform=x64",
-                "/nologo",
-                "/v:minimal"
-            ],
-            "group": "build",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "MSBuild: Rebuild Debug x64",
-            "type": "shell",
-            "command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-            "args": [
-                "${workspaceFolder}\\Survice ICE\\Survice ICE.vcxproj",
-                "/t:Rebuild",
-                "/p:Configuration=Debug",
-                "/p:Platform=x64",
-                "/nologo",
-                "/v:minimal"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "MSBuild: Clean",
-            "type": "shell",
-            "command": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-            "args": [
-                "${workspaceFolder}\\Survice ICE\\Survice ICE.vcxproj",
-                "/t:Clean",
-                "/p:Configuration=Debug",
-                "/p:Platform=x64",
-                "/nologo"
+                "/c",
+                "if exist build rmdir /s /q build"
             ],
             "problemMatcher": []
         }

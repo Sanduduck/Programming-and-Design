@@ -2,29 +2,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug (cppvsdbg, x64)",
+            "name": "Debug (MSVC, x64)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\Survice ICE\\x64\\Debug\\Survice ICE.exe",
+            "program": "${workspaceFolder}\\build\\game.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "integratedTerminal",
-            "preLaunchTask": "MSBuild: Debug x64"
+            "preLaunchTask": "Build (MSVC)"
         },
         {
             "name": "Run (no debug)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\Survice ICE\\x64\\Debug\\Survice ICE.exe",
+            "program": "${workspaceFolder}\\build\\game.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "integratedTerminal",
             "noDebug": true,
-            "preLaunchTask": "MSBuild: Debug x64"
+            "preLaunchTask": "Build (MSVC)"
         }
     ]
 }
