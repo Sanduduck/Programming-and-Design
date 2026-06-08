@@ -3,11 +3,21 @@
 
 #include <stdbool.h>
 
+// 화면 크기 (모든 모듈 공용)
+#define WINDOW_W 1280
+#define WINDOW_H 720
+#define FLOOR_Y  600    // 바닥 평지 윗면 y좌표 (player + 모든 패턴 공용)
+
+// 게임 상태
 typedef enum {
     STATE_MAIN_MENU,
-    STATE_PLAYING
+    STATE_PLAYING,
+    STATE_RESULT,
+    STATE_RANKING,
+    STATE_SETTINGS
 } GameState;
 
+// 플레이어
 typedef struct {
     float x, y;
     float vx, vy;
@@ -18,19 +28,28 @@ typedef struct {
     bool on_ground;
 } Player;
 
-typedef struct {
-    float x, y;
-    float vx, vy;
-    int width, height;
-    bool active;
-    int pattern_id;
-} Obstacle;
+// 조작 방식
+typedef enum {
+    CONTROL_ARROWS = 0,   // ← → ↑
+    CONTROL_WASD   = 1    // A D W
+} ControlScheme;
 
+// 설정
 typedef struct {
-    int id;
-    int phase;
-    int obstacle_count;
-    bool drop_heal_item;
-} Pattern;
+    int master_volume;        // 0~100
+    int bgm_volume;           // 0~100
+    int sfx_volume;           // 0~100
+    bool god_mode;            // true면 피해를 받지 않음
+    ControlScheme control_scheme;
+    int key_left;             // SDL_Scancode
+    int key_right;
+    int key_jump;
+} Settings;
+
+// 랭킹
+typedef struct {
+    int score;
+    char grade[4];
+} RankEntry;
 
 #endif
