@@ -1,83 +1,15 @@
-// 플레이어: 좌우 이동, 2단 점프, 중력, 바닥 충돌
-
 #include "player.h"
-
-#define WINDOW_W       1280
-#define FLOOR_Y        600       // 바닥 평지 윗면 y좌표
-#define PLAYER_WIDTH   50
-#define PLAYER_HEIGHT  50
-#define MOVE_SPEED     350.0f    // 좌우 이동 속도 (px/s)
-#define JUMP_SPEED     650.0f    // 점프 초속도 (px/s)
-#define GRAVITY        1600.0f   // 중력 가속도 (px/s^2)
 
 Player player;
 
 void init_player(void) {
-    player.x = 100.0f;
-    player.y = (float)(FLOOR_Y - PLAYER_HEIGHT);
+    player.x = 640.0f;
+    player.y = 410.0f;
     player.vx = 0.0f;
     player.vy = 0.0f;
-    player.hp = 4;
+    player.hp = 100;
     player.jump_count = 0;
-    player.max_jumps = 2;
+    player.max_jumps = 0;
     player.invincible_timer = 0;
     player.on_ground = true;
-}
-
-void update_player(float dt) {
-    // 좌우 입력 폴링 (방향키 또는 A/D)
-    const Uint8 *keys = SDL_GetKeyboardState(NULL);
-    player.vx = 0.0f;
-    if (keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A]) {
-        player.vx = -MOVE_SPEED;
-    }
-    if (keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D]) {
-        player.vx = MOVE_SPEED;
-    }
-
-    // 중력
-    player.vy += GRAVITY * dt;
-
-    // 위치 갱신
-    player.x += player.vx * dt;
-    player.y += player.vy * dt;
-
-    // 좌우 화면 경계
-    if (player.x < 0) player.x = 0;
-    if (player.x + PLAYER_WIDTH > WINDOW_W) player.x = (float)(WINDOW_W - PLAYER_WIDTH);
-
-    // 바닥 충돌 처리
-    if (player.y + PLAYER_HEIGHT >= FLOOR_Y) {
-        player.y = (float)(FLOOR_Y - PLAYER_HEIGHT);
-        player.vy = 0.0f;
-        player.on_ground = true;
-        player.jump_count = 0;
-    } else {
-        player.on_ground = false;
-    }
-
-    // 무적 타이머 감소
-    if (player.invincible_timer > 0) player.invincible_timer--;
-}
-
-void draw_player(SDL_Renderer *r) {
-    // 임시 사각형 (나중에 스프라이트로 교체)
-    SDL_Rect rect = { (int)player.x, (int)player.y, PLAYER_WIDTH, PLAYER_HEIGHT };
-    SDL_SetRenderDrawColor(r, 135, 206, 235, 255);   // 하늘색
-    SDL_RenderFillRect(r, &rect);
-}
-
-void player_jump(void) {
-    // 2단 점프: 첫 점프든 공중 점프든 vy 초기화 후 위로
-    if (player.jump_count < player.max_jumps) {
-        player.vy = -JUMP_SPEED;
-        player.jump_count++;
-        player.on_ground = false;
-    }
-}
-
-void player_damage(void) {
-    if (player.invincible_timer > 0) return;
-    if (player.hp > 0) player.hp--;
-    player.invincible_timer = 60;
 }
